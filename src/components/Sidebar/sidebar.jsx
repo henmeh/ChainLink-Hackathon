@@ -1,6 +1,7 @@
 // Components
 import { Link } from "react-router-dom";
 import Account from "../Account";
+import Chain from "../Chains/Chains";
 
 const Sidebar = () => {
   return (
@@ -11,6 +12,28 @@ const Sidebar = () => {
         </div>
       </div>
       <ul className="sidebar-list">
+      <Account />
+      <Chain />
+      <li className="sidebar-list-item">
+          <Link to="/NFTBalance">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="feather feather-home"
+            >
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            NFTBalance
+          </Link>
+        </li>
       <li className="sidebar-list-item">
           <Link to="/Wallet">
             <svg
@@ -94,7 +117,6 @@ const Sidebar = () => {
           </Link>
         </li>
       </ul>
-      <Account />
     </div>
   );
 };

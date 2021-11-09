@@ -6,6 +6,7 @@ import Sidebar from "./components/Sidebar/sidebar";
 import Products from "./components/Products/products";
 import Transactions from "./components/Transactions/transactions";
 import Wallet from "./components/Wallet/Wallet";
+import NFTBalance from "./components/NFTBalance";
 
 // Routing
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -33,6 +34,7 @@ const App = ({ isServerInfo }) => {
         <Route path="/Wallet" element={<Wallet loggedIn={isAuthenticated}/>} />
         <Route path="/Products" element={<Products loggedIn={isAuthenticated}/>} />
         <Route path="/Transactions" element={<Transactions loggedIn={isAuthenticated}/>} />
+        <Route path="/NFTBalance" element={<NFTBalance loggedIn={isAuthenticated}/>} />
       </Routes>
     </Router>
   </Wrapper>
