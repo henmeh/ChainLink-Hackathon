@@ -27,6 +27,8 @@ function InchDex({ chain }) {
   const [quote, setQuote] = useState();
   const [currentTrade, setCurrentTrade] = useState();
 
+  console.log(chainId);
+
   const onChangeHandler = (event) => setFromAmount(event.target.value);
 
   useEffect(() => {
