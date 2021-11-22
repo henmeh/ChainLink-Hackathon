@@ -34,27 +34,23 @@ const styles = {
   },
 };
 
-function Wallet({ loggedIn }) {
-  if (loggedIn) {
-    return (
-      <div style={styles.wrapper}>
-        <Card
-          style={styles.card}
-          title={
-            <div style={styles.header}>
-              <Blockie scale={5} avatar currentWallet />
-              <Address size="6" copyable />
-              <NativeBalance />
-            </div>
-          }
-        >
-          <Transfer />
-        </Card>
-      </div>
-    );
-  } else {
-    return <div>Please log in </div>;
-  }
+function Wallet() {
+  return (
+    <div style={styles.wrapper}>
+      <Card
+        style={styles.card}
+        title={
+          <div style={styles.header}>
+            <Blockie scale={5} avatar currentWallet />
+            <Address size="6" copyable />
+            <NativeBalance />
+          </div>
+        }
+      >
+        <Transfer />
+      </Card>
+    </div>
+  );
 }
 
 export default Wallet;

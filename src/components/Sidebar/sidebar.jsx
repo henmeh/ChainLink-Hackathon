@@ -117,7 +117,7 @@ const Sidebar = () => {
           </Link>
         </li>
         <li className="sidebar-list-item">
-          <Link to="Transactions">
+          <Link to="Employees">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"

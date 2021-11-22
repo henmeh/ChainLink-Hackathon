@@ -83,7 +83,11 @@ const menuItems = [
 function Chains() {
   const { switchNetwork } = useChain();
   const { chainId } = useMoralisDapp();
-  const [selected, setSelected] = useState({});
+  const [selected, setSelected] = useState({
+    key: "0x1",
+    value: "Ethereum",
+    icon: <ETHLogo />,
+  });
 
   useEffect(() => {
     if (!chainId) return null;

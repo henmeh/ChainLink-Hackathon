@@ -1,15 +1,49 @@
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu:hover::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-active::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-active::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-open::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-open::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item-selected::after,
-.ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected::after {
-  border-bottom: 2px solid #21bf96 !important;
+.ant-menu-inline:not(.ant-menu-dark) > .ant-menu-item:hover::after,
+.ant-menu-inline:not(.ant-menu-dark) > .ant-menu-submenu:hover::after,
+.ant-menu-inline:not(.ant-menu-dark) > .ant-menu-item-active::after,
+.ant-menu-inline:not(.ant-menu-dark) > .ant-menu-submenu-active::after,
+.ant-menu-inline:not(.ant-menu-dark) > .ant-menu-item-open::after,
+.ant-menu-inline:not(.ant-menu-dark) > .ant-menu-submenu-open::after,
+.ant-menu-inline:not(.ant-menu-dark) > .ant-menu-item-selected::after,
+.ant-menu-inline:not(.ant-menu-dark) > .ant-menu-submenu-selected::after {
+  border-bottom: 2px solid orange !important;
+}
+.ant-menu-item a {
+  color: white !important;
+}
+.ant-table {
+  background-color: transparent;
+}
+.ant-table-cell {
+  color: white;
 }
 
-.ant-menu-horizontal > .ant-menu-item-selected a,
-.ant-menu-horizontal > .ant-menu-item a:hover {
-  color: #21bf96 !important;
+.ant-table-row:hover {
+  color: white !important;
+  background: darkblue !important;
+}
+.ant-table-tbody > tr.ant-table-row:hover > td {
+  background: darkblue !important;
+}
+.ant-menu-inline > .ant-menu-item-selected a,
+.ant-menu-inline > .ant-menu-item a:hover {
+  color: darkblue !important;
+}
+
+/*Scrollbar*/
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px black;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: orange;
+  border-radius: 10px;
 }
