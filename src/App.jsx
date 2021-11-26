@@ -9,8 +9,9 @@ import InchDex from "./components/InchDex/InchDex";
 import Employees from "./components/Employees/employees";
 import Chains from "./components/Chains/Chains";
 import Account from "./components/Account";
-import { Menu } from "antd";
+import { Menu, Image } from "antd";
 import "./style.css";
+import logo from "./images/logo.npg.png";
 
 // Routing
 //import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -21,6 +22,7 @@ import {
   NavLink,
   Redirect,
 } from "react-router-dom";
+import CreateNFT from "components/NFTMinter/NFTMinter";
 
 const App = ({ isServerInfo }) => {
   const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } =
@@ -73,7 +75,11 @@ const App = ({ isServerInfo }) => {
       <div style={{ mineight: "100vh", display: "flex", flexDirection: "row" }}>
         <div style={styles.sider}>
           <div style={styles.siderTop}>
-            Logo
+            <Image
+            width="175px"
+            height="175px"
+            src= {logo}
+            />
             <Chains />
             <Account />
           </div>
@@ -112,6 +118,9 @@ const App = ({ isServerInfo }) => {
             <Menu.Item key="employees">
               <NavLink to="/employees"> Employees</NavLink>
             </Menu.Item>
+            <Menu.Item key="nftminter">
+              <NavLink to="/nftminter"> NFT Minter</NavLink>
+            </Menu.Item>
           </Menu>
         </div>
         <div style={styles.content}>
@@ -137,6 +146,9 @@ const App = ({ isServerInfo }) => {
             </Route>
             <Route exact path="/employees">
               <Employees />
+            </Route>
+            <Route exact path="/nftminter">
+              <CreateNFT />
             </Route>
              <Redirect from="/" to="/balance" />
           </Switch>

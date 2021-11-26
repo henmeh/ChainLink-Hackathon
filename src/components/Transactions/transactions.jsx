@@ -3,17 +3,7 @@ import NativeTransactions from "../NativeTransactions/NativeTransactions";
 
 const Transactions = () => {
   return (
-    <div
-      style={{
-        width: "100%",
-        padding: "15px",
-        display: "flex",
-        flexDirection: "row",
-      }}
-    >
       <ERC20Transfer />
-      
-    </div>
   );
 };
 

@@ -11,6 +11,7 @@ Moralis.start({
 const EditEmployeeModal = ({
   open,
   onClose,
+  _paymentMethod,
   _id,
   _title,
   _first_name,
@@ -35,12 +36,14 @@ const EditEmployeeModal = ({
   const [ethAddress, setEthAddress] = useState(_ethAddress);
   const [hireDate, setHireDate] = useState(_hireDate);
   const [salary, setSalary] = useState(_salary);
+  const [paymentMethod, setPaymentMethod] = useState(_paymentMethod);
   
   const edit = async () => {
-    const Employee = Moralis.Object.extend("Employees");
+    const Employee = Moralis.Object.extend(paymentMethod);
         const query = new Moralis.Query(Employee);
         query.equalTo("objectId", _id);
         const result = await query.first();
+        result.set("title", title);
         result.set("first_name", first_name);
         result.set("last_name", last_name);
         result.set("dateOfBirth", dateOfBirth);
@@ -80,7 +83,7 @@ const EditEmployeeModal = ({
       alignItems: "center",
       maxWidth: "430px",
       width: "100%",
-      height: "750px",
+      //height: "800px",
       //marginTop: "-300px",
       padding: "20px",
       background: "rgb(48, 48, 48)",
@@ -114,12 +117,12 @@ const EditEmployeeModal = ({
         </div>
         <Form
           name="basic"
-          labelCol={{ span: 8 }}
+          labelCol={{ span: 9 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: false }}
           autoComplete="off"
         >
-          <Form.Item label="Title" name="title">
+          <Form.Item label={<label style={{color: "white"}}> Title </label>} name="title">
             <Input
               defaultValue={title}
               type="text"
@@ -127,7 +130,7 @@ const EditEmployeeModal = ({
             />
           </Form.Item>
           <Form.Item
-            label="First Name"
+            label={<label style={{color: "white"}}> First Name </label>}
             name="first_name"
             rules={[{ required: true, message: "Please input First Name!" }]}
           >
@@ -139,7 +142,7 @@ const EditEmployeeModal = ({
             />
           </Form.Item>
           <Form.Item
-            label="Last Name"
+            label={<label style={{color: "white"}}> Last Name </label>}
             name="last_name"
             rules={[{ required: true, message: "Please input Last Name!" }]}
           >
@@ -151,7 +154,7 @@ const EditEmployeeModal = ({
             />
           </Form.Item>
           <Form.Item
-            label="Date of Birth"
+            label={<label style={{color: "white"}}> Date of Birth </label>}
             name="dateofbirth"
             rules={[{ required: true, message: "Please input Date of Birth!" }]}
           >
@@ -163,7 +166,7 @@ const EditEmployeeModal = ({
             />
           </Form.Item>
           <Form.Item
-            label="Gender"
+            label={<label style={{color: "white"}}> Gender </label>}
             name="gender"
             rules={[{ required: true, message: "Please input Gender!" }]}
           >
@@ -175,7 +178,7 @@ const EditEmployeeModal = ({
             />
           </Form.Item>
           <Form.Item
-            label="Address"
+            label={<label style={{color: "white"}}> Address </label>}
             name="address"
             rules={[{ required: true, message: "Please input Address!" }]}
           >
@@ -187,7 +190,7 @@ const EditEmployeeModal = ({
             />
           </Form.Item>
           <Form.Item
-            label="Email"
+            label={<label style={{color: "white"}}> Email </label>}
             name="email"
             rules={[{ required: true, message: "Please input Email!" }]}
           >
@@ -199,7 +202,7 @@ const EditEmployeeModal = ({
             />
           </Form.Item>
           <Form.Item
-            label="Phone"
+            label={<label style={{color: "white"}}> Phone </label>}
             name="phone"
             rules={[{ required: true, message: "Please input Phone!" }]}
           >
@@ -211,7 +214,7 @@ const EditEmployeeModal = ({
             />
           </Form.Item>
           <Form.Item
-            label="Eth Address"
+            label={<label style={{color: "white"}}> Eth Address </label>}
             name="ethAddress"
             rules={[{ required: true, message: "Please input Eth Address!" }]}
           >
@@ -223,7 +226,7 @@ const EditEmployeeModal = ({
             />
           </Form.Item>
           <Form.Item
-            label="Hire Date"
+            label={<label style={{color: "white"}}> Hire Date </label>}
             name="hiredate"
             rules={[{ required: true, message: "Please input Hire Date!" }]}
           >
@@ -235,7 +238,7 @@ const EditEmployeeModal = ({
             />
           </Form.Item>
           <Form.Item
-            label="Monthly Salary"
+            label={<label style={{color: "white"}}> Monthly Salary </label>}
             name="salary"
             rules={[{ required: true, message: "Please input Hire Salary!" }]}
           >

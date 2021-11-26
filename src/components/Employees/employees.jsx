@@ -3,7 +3,8 @@ import NewEmployeeModal from "./components/NewEmployeeModal";
 import { Moralis } from "moralis";
 import Button from "../Button/button";
 import "../../style.css";
-
+import useChain from "hooks/useChain";
+import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { erc20Abi } from "../../helpers/abi";
 import PaymentFlow from "./components/paymentFlow";
 import PaymentPool from "./components/paymentPools";
@@ -16,10 +17,17 @@ Moralis.start({
 const Employees = () => {
   const [isAddEmployeeModalActive, setAddEmployeeModalActive] = useState(false);
   const [daiBalance, setDaiBalance] = useState("");
+  const { switchNetwork } = useChain();
+  const { chainId } = useMoralisDapp();
 
   useEffect(() => {
+    networkCheck();
     getDaiBalance();
   });
+
+  const networkCheck = async () => {
+    chainId !== "0x5" && switchNetwork("0x5");
+  }
 
   const getDaiBalance = async () => {
     const web3 = await Moralis.enableWeb3();
@@ -74,3 +82,4 @@ const Employees = () => {
 };
 
 export default Employees;
+  

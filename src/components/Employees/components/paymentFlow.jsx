@@ -8,6 +8,7 @@ import SuperfluidSDK from "@superfluid-finance/js-sdk";
 import { Web3Provider } from "@ethersproject/providers";
 import { Moralis } from "moralis";
 import { useMoralis } from "react-moralis";
+import PayedOut from "./PayedOut";
 
 Moralis.start({
   serverUrl: process.env.REACT_APP_MORALIS_SERVER_URL,
@@ -33,7 +34,7 @@ const PaymentFlow = () => {
   const [isEditEmployeeModalActive, setEditEmployeeModalActive] =
     useState(false);
   const { data, errorQuery, isLoading } = useMoralisQuery(
-    "Paymentflows",
+    "PaymentFlow",
     (query) => query.descending("objectId"),
     [],
     { live: true }
@@ -49,6 +50,7 @@ const PaymentFlow = () => {
       token: "0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00",
     });
     setEmployer(employer);
+    //await fetchingFlowDetails(employer);
   };
 
   useEffect(() => {
@@ -56,7 +58,7 @@ const PaymentFlow = () => {
   }, []);
 
   const deleteEmployee = async (_employeeId) => {
-    const Employee = Moralis.Object.extend("Employees");
+    const Employee = Moralis.Object.extend("PaymentFlow");
     const query = new Moralis.Query(Employee);
     query.equalTo("objectId", _employeeId);
     const result = await query.first();
@@ -116,7 +118,7 @@ const PaymentFlow = () => {
       flowRate: flowRate.toString(),
     });
 
-    const Employee = Moralis.Object.extend("Employees");
+    const Employee = Moralis.Object.extend("PaymentFlow");
     const query = new Moralis.Query(Employee);
     query.equalTo("objectId", _id);
     const result = await query.first();
@@ -139,13 +141,14 @@ const PaymentFlow = () => {
       flowRate: "0",
     });
 
-    const Employee = Moralis.Object.extend("Employees");
+    const Employee = Moralis.Object.extend("PaymentFlow");
     const query = new Moralis.Query(Employee);
     query.equalTo("objectId", _id);
     const result = await query.first();
     result.set("activeStream", false);
     await result.save();
   };
+
   let dataSource = [];
 
   if (data.length > 0) {
@@ -267,10 +270,13 @@ const PaymentFlow = () => {
             }
           />
         ) : (
+          <div>
           <Button
             text={"Stop"}
             onClick={() => deletePaymentFlow(record.ethAddress, record.id)}
           />
+          <PayedOut _salary = {record.salary} />
+          </div>
         ),
     },
   ];
@@ -281,6 +287,7 @@ const PaymentFlow = () => {
         <EditEmployeeModal
           open={isEditEmployeeModalActive}
           onClose={() => setEditEmployeeModalActive(false)}
+          _paymentMethod = "PaymentFlow"
           _id={id}
           _title={title}
           _first_name={first_name}
@@ -299,7 +306,7 @@ const PaymentFlow = () => {
         rowClassName="tablerow"
         dataSource={dataSource}
         columns={columns}
-        title={() => <h3 style={{ color: "white"}}>Company Paymentflows</h3>}
+        title={() => <h3 style={{ color: "black"}}>Company Paymentflows</h3>}
       />
     </div>
   );

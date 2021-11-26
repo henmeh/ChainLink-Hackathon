@@ -65,8 +65,8 @@ function ERC20Transfers() {
   return (
     <>
     {console.log(ERC20Transfers)}
-    <div style={{ width: "50%", padding: "15px" }}>
-      <h1>💸ERC20 Transfers</h1>
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      <h1 style={{color: "white"}}>💸ERC20 Transfers</h1>
       <Skeleton loading={!ERC20Transfers}>
         <Table
           rowClassName="tablerow"

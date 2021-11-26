@@ -13,6 +13,8 @@ const chainIds = {
   "0x89": "polygon",
 };
 
+
+
 const getChainById = (id) => chainIds[id];
 
 function InchDex({ chain }) {
@@ -48,7 +50,7 @@ function InchDex({ chain }) {
     <Card style={styles.card}>
       <div>
         <div>
-          <Text>Swap</Text>
+          <Text style={{color: "white"}}>Swap</Text>
           {/* <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -174,7 +176,7 @@ function InchDex({ chain }) {
               </div>
             </div>
           </div>
-          <div>
+          <div style={{color: "white"}}>
             Estimated Gas: <span id="gas_estimate">{quote?.estimatedGas}</span>
           </div>
           <button

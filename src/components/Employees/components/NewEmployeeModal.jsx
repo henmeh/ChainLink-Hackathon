@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useNewMoralisObject } from "react-moralis";
 import Button from "../../Button/button";
 import { Form, Checkbox } from "antd";
+import { Moralis } from "moralis";
+import SuperfluidSDK from "@superfluid-finance/js-sdk";
+import { Web3Provider } from "@ethersproject/providers";
+import { useMoralis } from "react-moralis";
+
+
+Moralis.start({
+  serverUrl: process.env.REACT_APP_MORALIS_SERVER_URL,
+  appId: process.env.REACT_APP_MORALIS_APPLICATION_ID,
+});
 
 const NewEmployeeModal = ({ open, onClose }) => {
   const [title, setTitle] = useState("");
@@ -15,12 +24,12 @@ const NewEmployeeModal = ({ open, onClose }) => {
   const [ethAddress, setEthAddress] = useState("");
   const [hireDate, setHireDate] = useState("");
   const [salary, setSalary] = useState("");
-  const[checked, setChecked] = useState(true);
-  const[disabled, setDisabled] = useState(false);
+  const[isFlow, setFlow] = useState(false);
+  const[isPool, setPool] = useState(false);
+  const { user } = useMoralis();
 
-  const { isSaving, errorSaving, save } = useNewMoralisObject("Employees");
 
-  const styles = {
+    const styles = {
     modal: {
       height: "100vh",
       width: "100vw",
@@ -53,9 +62,107 @@ const NewEmployeeModal = ({ open, onClose }) => {
     },
   };
 
-  const onChange = () => {
-    console.log("Hallo");
+  const onChangeFlow = () => {
+    setFlow(!isFlow);
   }
+
+  const onChangePool = () => {
+    setPool(!isPool);
+  }
+
+  const saveEmployee = async (_paymentMethod, _title, _first_name, _last_name, _dateOfBirth, _gender, _address, _emailAddress, _phone, _ethAddress, _hireDate, _salary, _activeStream, _poolId) => {
+    if(_paymentMethod === "flow") {
+      const Employee = Moralis.Object.extend("PaymentFlow"); 
+      const employee = new Employee();
+      employee.set("paymentMethod", _paymentMethod);
+      employee.set("title", _title);
+      employee.set("first_name", _first_name);
+      employee.set("last_name", _last_name);
+      employee.set("dateOfBirth", _dateOfBirth);
+      employee.set("gender", _gender);
+      employee.set("address", _address);
+      employee.set("emailAddress", _emailAddress);
+      employee.set("phone", _phone);
+      employee.set("ethAddress", _ethAddress);
+      employee.set("hireDate", _hireDate);
+      employee.set("salary", _salary);
+      employee.set("activeStream", _activeStream);
+      await employee.save();
+      }
+    if(_paymentMethod === "pool") {
+      const Employee = Moralis.Object.extend("PaymentPoolMembers"); 
+      const queryPoolMembers = new Moralis.Query(Employee);
+      queryPoolMembers.limit(1000);
+      const result = await queryPoolMembers.find();
+      if(result.length === 0) {
+        const employee = new Employee();
+        employee.set("paymentMethod", _paymentMethod);
+        employee.set("title", _title);
+        employee.set("first_name", _first_name);
+        employee.set("last_name", _last_name);
+        employee.set("dateOfBirth", _dateOfBirth);
+        employee.set("gender", _gender);
+        employee.set("address", _address);
+        employee.set("emailAddress", _emailAddress);
+        employee.set("phone", _phone);
+        employee.set("ethAddress", _ethAddress);
+        employee.set("hireDate", _hireDate);
+        employee.set("salary", _salary);
+        employee.set("poolSize", _salary);
+        employee.set("poolShares", 1);
+        await employee.save();
+        await addPoolMembers(_ethAddress, 1);
+      } else {
+        // calculating poolSize
+        let poolSize = parseFloat(_salary);
+        for(let i = 0; i < result.length; i++) {
+          poolSize += parseFloat(result[i].get("salary"));
+        }
+        for(let i = 0; i < result.length; i++) {
+          result[i].set("poolShares", result[i].get("salary") / poolSize);
+          result[i].set("poolSize", poolSize.toString());
+          await result[i].save();
+        }
+        // adding new member
+        const employee = new Employee();
+        employee.set("paymentMethod", _paymentMethod);
+        employee.set("title", _title);
+        employee.set("first_name", _first_name);
+        employee.set("last_name", _last_name);
+        employee.set("dateOfBirth", _dateOfBirth);
+        employee.set("gender", _gender);
+        employee.set("address", _address);
+        employee.set("emailAddress", _emailAddress);
+        employee.set("phone", _phone);
+        employee.set("ethAddress", _ethAddress);
+        employee.set("hireDate", _hireDate);
+        employee.set("salary", _salary);
+        employee.set("poolSize", poolSize.toString());
+        employee.set("poolShares", salary / poolSize);
+        await employee.save();
+        await addPoolMembers(_ethAddress, (salary / poolSize));
+      }
+    }
+  }
+
+  const addPoolMembers = async (_memberAddress, _shares) => {
+    //init superfluid
+    const sf = new SuperfluidSDK.Framework({
+      ethers: new Web3Provider(window.ethereum),
+    });
+    await sf.initialize();
+    const employer = sf.user({
+      address: user.attributes.ethAddress,
+      token: "0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00",
+    });
+    
+    //adding poolmembers
+    await employer.giveShares({
+      poolId: 104,
+      recipient: _memberAddress,
+      shares: (_shares * 100).toFixed(0),
+    });
+  };
 
   return (
     <div style={styles.modal}>
@@ -216,14 +323,17 @@ const NewEmployeeModal = ({ open, onClose }) => {
           </Form.Item>
         </Form>
         <div>
-        <Checkbox onChange={onChange}><text style={{color: "white"}}>Add to Paymentflow</text></Checkbox>
-        <Checkbox onChange={onChange}><text style={{color: "white"}}>Add to Paymentpool</text></Checkbox>
+        <Checkbox onChange={onChangeFlow}><h3 style={{color: "white"}}>Add to Paymentflow</h3></Checkbox>
+        <Checkbox onChange={onChangePool}><h3 style={{color: "white"}}>Add to Paymentpool</h3></Checkbox>
         </div>
         
         <Button
           text={"Create"}
           onClick={() => {
             const activeStream = false;
+            const poolId = 1;
+            let paymentMethod;
+            isFlow ? paymentMethod = "flow" : paymentMethod = "pool";
             setTitle("");
             setFirstName("");
             setLastName("");
@@ -235,7 +345,8 @@ const NewEmployeeModal = ({ open, onClose }) => {
             setEthAddress("");
             setHireDate("");
             setSalary("");
-            save({
+            saveEmployee(
+              paymentMethod,
               title,
               first_name,
               last_name,
@@ -248,7 +359,8 @@ const NewEmployeeModal = ({ open, onClose }) => {
               hireDate,
               salary,
               activeStream,
-            });
+              poolId,
+            )
             onClose();
           }}
         />

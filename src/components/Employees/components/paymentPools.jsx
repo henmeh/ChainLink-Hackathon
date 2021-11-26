@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Button from "../../Button/button";
 import { Table } from "antd";
 import { getEllipsisTxt } from "../../../helpers/formatters";
-import { useMoralisQuery } from "react-moralis";
+import { useMoralisQuery, useNewMoralisObject } from "react-moralis";
 import EditEmployeeModal from "./EditEmployeeModal";
 import SuperfluidSDK from "@superfluid-finance/js-sdk";
 import { Web3Provider } from "@ethersproject/providers";
@@ -33,11 +33,13 @@ const PaymentPool = () => {
   const [isEditEmployeeModalActive, setEditEmployeeModalActive] =
     useState(false);
   const { data, errorQuery, isLoading } = useMoralisQuery(
-    "Paymentpools",
+    "PaymentPoolMembers",
     (query) => query.descending("objectId"),
     [],
     { live: true }
   );
+
+  const { save } = useNewMoralisObject("PaymentPoolMembers");
 
   const initSuperfluid = async () => {
     const sf = new SuperfluidSDK.Framework({
@@ -49,6 +51,7 @@ const PaymentPool = () => {
       token: "0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00",
     });
     setEmployer(employer);
+    //await employer.createPool({ poolId: 104 });
   };
 
   useEffect(() => {
@@ -56,105 +59,24 @@ const PaymentPool = () => {
   }, []);
 
   const deleteEmployee = async (_employeeId) => {
-    const Employee = Moralis.Object.extend("Employees");
+    const Employee = Moralis.Object.extend("PaymentPoolMembers");
     const query = new Moralis.Query(Employee);
     query.equalTo("objectId", _employeeId);
     const result = await query.first();
     await result.destroy();
   };
 
-    /*const createNewPaymentPool = async () => {
-    const Pools = Moralis.Object.extend("Paymentpools");
-    const query = new Moralis.Query(Pools);
-    const result = await query.find();
-    const newPoolId = (result.length + 1) * 10;
-
-    const poolMembers = [];
-    const poolSize = 0;
-    const poolEmployees = [];
-
-    await save({ newPoolId, poolMembers, poolSize, poolEmployees });
-    console.log(employer);
-
-    await employer.createPool({
-      poolId: newPoolId,
-    });
-  };*/
-
-  const addPoolMembers = async (_poolId, _memberAddress, _salary) => {
-    //finding the pool on moralis
-    const Pool = Moralis.Object.extend("Paymentpools");
-    const query = new Moralis.Query(Pool);
-    query.equalTo("newPoolId", _poolId);
-    const result = await query.first();
-    let poolMembers = result.get("poolMembers");
-    let poolSize = result.get("poolSize");
-    let poolEmployees = result.get("poolEmployees");
-
-    if (poolMembers.length > 0) {
-      if (poolMembers.includes(_memberAddress)) {
-        alert("This employee is already part of this paymentpool");
-      } else {
-        let newPoolEmployees = [];
-        let newPoolMembers = [...poolMembers, _memberAddress];
-        let newPoolSize = poolSize + parseFloat(_salary);
-
-        for (let i = 0; i < poolEmployees.length; i++) {
-          let poolEmployee = {
-            address: _memberAddress,
-            salary: poolEmployees[i]["salary"],
-            shares: poolEmployees[i]["salary"] / newPoolSize,
-          };
-          newPoolEmployees.push(poolEmployee);
-        }
-        let newPoolEmployee = {
-          address: _memberAddress,
-          salary: _salary,
-          shares: _salary / newPoolSize,
-        };
-        newPoolEmployees.push(newPoolEmployee);
-
-        result.set("poolMembers", newPoolMembers);
-        result.set("poolSize", newPoolSize);
-        result.set("poolEmployees", newPoolEmployees);
-
-        await result.save();
-
-        //calculating shares of all poolmembers
-        //let employeeData = result.get("employeeData")
-        //for(let i = 0; i < employeeData.length; i++) {
-        //  employeeData[i]["poolshares"].set(poolSize / employeeData[i]["salary"]=;
-        //}
-      }
-    } else {
-      result.set("poolMembers", [_memberAddress]);
-      result.set("poolSize", parseFloat(_salary));
-      result.set("poolEmployees", [
-        { address: _memberAddress, salary: parseFloat(_salary), shares: 1 },
-      ]);
-      await result.save();
-
-      //adding poolmembers
-      await employer.giveShares({
-        poolId: _poolId,
-        recipient: _memberAddress,
-        shares: 1,
-      });
-    }
-  };
-
-  const payoutPool = async (_poolId) => {
+  const payoutPool = async () => {
     //finding the pool on moralis
     const web3 = new Moralis.Web3();
-    const Pool = Moralis.Object.extend("Paymentpools");
+    const Pool = Moralis.Object.extend("PaymentPoolMembers");
     const query = new Moralis.Query(Pool);
-    query.equalTo("newPoolId", _poolId);
     const result = await query.first();
     let poolSize = result.get("poolSize");
-    const salary = web3.utils.toWei(poolSize.toString(), "ether");
+    const salary = web3.utils.toWei(poolSize, "ether");
 
     await employer.distributeToPool({
-      poolId: _poolId,
+      poolId: 104,
       amount: salary,
     });
   };
@@ -300,11 +222,12 @@ const PaymentPool = () => {
   ];
 
   return (
-    <div style={{margin: "10px"}}>
+    <div style={{ margin: "10px" }}>
       {isEditEmployeeModalActive && (
         <EditEmployeeModal
           open={isEditEmployeeModalActive}
           onClose={() => setEditEmployeeModalActive(false)}
+          _paymentMethod = {"PaymentPoolMembers"}
           _id={id}
           _title={title}
           _first_name={first_name}
@@ -319,11 +242,14 @@ const PaymentPool = () => {
           _salary={salary}
         />
       )}
+      <div style={{display: "flex", flexDirection: "row"}}>
+        <Button text={"Payout Pool"} onClick={payoutPool} />
+      </div>
       <Table
         rowClassName="tablerow"
         dataSource={dataSource}
         columns={columns}
-        title={() => <h3 style={{ color: "white"}}>Company Paymentpools</h3>}
+        title={() => <h3 style={{ color: "black" }}>Company Paymentpools</h3>}
       />
     </div>
   );
