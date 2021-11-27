@@ -15,6 +15,7 @@ const EditInventoryModal = ({ open, onClose, _id, _item, _category, _status, _sa
   const [sales, setSales] = useState(_sales);
   const [stock, setStock] = useState(_stock);
   const [price, setPrice] = useState(_price);
+  const [id, setId] = useState(_id);
 
   const styles = {
     modal: {
@@ -51,7 +52,7 @@ const EditInventoryModal = ({ open, onClose, _id, _item, _category, _status, _sa
 
   const edit = async () => {
     const Inventory = Moralis.Object.extend("Inventory");
-    const query = new Inventory();
+    const query = new Moralis.Query(Inventory);
     query.equalTo("objectId", _id);
     const result = await query.first();
     result.set("item", item);
@@ -69,7 +70,7 @@ const EditInventoryModal = ({ open, onClose, _id, _item, _category, _status, _sa
     <div style={styles.modal}>
       <div style={styles.modalContent}>
         <div style={styles.modalHeader}>
-          <h3 style={{ color: "white" }}> Edit Inventory</h3>
+          <h3 style={{ color: "white" }}> Edit Product</h3>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width={18}

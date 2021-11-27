@@ -12,6 +12,7 @@ import Account from "./components/Account";
 import { Menu, Image } from "antd";
 import "./style.css";
 import logo from "./images/logo.npg.png";
+import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 
 // Routing
 //import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -25,8 +26,18 @@ import {
 import CreateNFT from "components/NFTMinter/NFTMinter";
 
 const App = ({ isServerInfo }) => {
-  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } =
+  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading, user} =
     useMoralis();
+    const { chainId } = useMoralisDapp();
+
+    const chainIds = {
+      "0x1": "eth",
+      "0x38": "bsc",
+      "0x89": "polygon",
+    };
+  
+    const getChainById = (id) => chainIds[id];
+
 
   useEffect(() => {
     if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();
@@ -104,7 +115,7 @@ const App = ({ isServerInfo }) => {
               <NavLink to="/nftbalance"> NFT Balance</NavLink>
             </Menu.Item>
             <Menu.Item key="wallet">
-              <NavLink to="/wallet"> Wallet</NavLink>
+              <NavLink to="/wallet"> Transfer Assets</NavLink>
             </Menu.Item>
             <Menu.Item key="transactions">
               <NavLink to="/transactions"> Transactions</NavLink>
@@ -139,13 +150,13 @@ const App = ({ isServerInfo }) => {
               <Transactions />
             </Route>
             <Route exact path="/swap">
-              <InchDex />
+              <InchDex chain={getChainById(chainId)}/>
             </Route>
             <Route exact path="/products">
               <Products />
             </Route>
             <Route exact path="/employees">
-              <Employees />
+              <Employees user={user}/>
             </Route>
             <Route exact path="/nftminter">
               <CreateNFT />

@@ -72,7 +72,7 @@ const NewInventoryModal = ({ open, onClose }) => {
     <div style={styles.modal}>
       <div style={styles.modalContent}>
         <div style={styles.modalHeader}>
-          <h3 style={{ color: "white" }}> Create new Inventory</h3>
+          <h3 style={{ color: "white" }}> Create new Product</h3>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width={18}

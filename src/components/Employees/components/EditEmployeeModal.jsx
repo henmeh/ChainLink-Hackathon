@@ -156,7 +156,7 @@ const EditEmployeeModal = ({
           <Form.Item
             label={<label style={{color: "white"}}> Date of Birth </label>}
             name="dateofbirth"
-            rules={[{ required: true, message: "Please input Date of Birth!" }]}
+            //rules={[{ required: true, message: "Please input Date of Birth!" }]}
           >
             <Input
               className="input_dateOfBirth"
@@ -168,7 +168,7 @@ const EditEmployeeModal = ({
           <Form.Item
             label={<label style={{color: "white"}}> Gender </label>}
             name="gender"
-            rules={[{ required: true, message: "Please input Gender!" }]}
+            //rules={[{ required: true, message: "Please input Gender!" }]}
           >
             <Input
               className="input_gender"
@@ -180,7 +180,7 @@ const EditEmployeeModal = ({
           <Form.Item
             label={<label style={{color: "white"}}> Address </label>}
             name="address"
-            rules={[{ required: true, message: "Please input Address!" }]}
+            //rules={[{ required: true, message: "Please input Address!" }]}
           >
             <Input
               className="input_address"
@@ -192,7 +192,7 @@ const EditEmployeeModal = ({
           <Form.Item
             label={<label style={{color: "white"}}> Email </label>}
             name="email"
-            rules={[{ required: true, message: "Please input Email!" }]}
+            //rules={[{ required: true, message: "Please input Email!" }]}
           >
             <Input
               className="input_email"
@@ -204,7 +204,7 @@ const EditEmployeeModal = ({
           <Form.Item
             label={<label style={{color: "white"}}> Phone </label>}
             name="phone"
-            rules={[{ required: true, message: "Please input Phone!" }]}
+            //rules={[{ required: true, message: "Please input Phone!" }]}
           >
             <Input
               className="input_phone"
@@ -228,7 +228,7 @@ const EditEmployeeModal = ({
           <Form.Item
             label={<label style={{color: "white"}}> Hire Date </label>}
             name="hiredate"
-            rules={[{ required: true, message: "Please input Hire Date!" }]}
+            //rules={[{ required: true, message: "Please input Hire Date!" }]}
           >
             <Input
               className="input_hiredate"
@@ -240,7 +240,7 @@ const EditEmployeeModal = ({
           <Form.Item
             label={<label style={{color: "white"}}> Monthly Salary </label>}
             name="salary"
-            rules={[{ required: true, message: "Please input Hire Salary!" }]}
+            rules={[{ required: true, message: "Please input Monthly Salary!" }]}
           >
             <Input
               className="input_salaray"

@@ -8,6 +8,8 @@ export default function File ({t}) {
 
     const {  saveFile } = useMoralisFile(); //   error, isUploading, moralisFile, saveFile,
     const [myObject, setObject] = useState("No file saved for this transaction");
+    const [fileLink, setFileLink] = useState("");
+    const [isCopied, setIsCopied] = useState(false);
 
 
 async function uploadFile(event, object) {
@@ -35,6 +37,7 @@ async function uploadFile(event, object) {
         await EthTransactionFile.save().then(function(file) { // await user.save()??
             console.log("upload done", file)
             setObject(fileName)
+            setFileLink(moralisFile.ipfs())
           }, function(error) {
             console.log("there was an error", error);
           });
@@ -52,6 +55,7 @@ async function uploadFile(event, object) {
        await EthTransactionFile.save().then(function(file) { // await user.save()??
         console.log("upload done", file)
         setObject(fileName)
+        setFileLink(moralisFile.ipfs())
       }, function(error) {
         console.log("there was an error", error);
       });
@@ -90,6 +94,7 @@ else
         if(EthTransactionFile)
         {
           setObject(EthTransactionFile.get('file_name'));
+          setFileLink(EthTransactionFile.get("ipfs"))
       }
     
           }
@@ -107,6 +112,30 @@ else
 
 } , [isAuthenticated]);
 
+async function copyTextToClipboard() {
+  if ('clipboard' in navigator) {
+    return await navigator.clipboard.writeText(fileLink);
+  } else {
+    return document.execCommand('copy', true, fileLink);
+  }
+}
+
+  // onClick handler function for the copy button
+  const handleCopyClick = () => {
+    // Asynchronously call copyTextToClipboard
+    copyTextToClipboard()
+      .then(() => {
+        // If successful, update the isCopied state value
+        setIsCopied(true);
+        setTimeout(() => {
+          setIsCopied(false);
+        }, 1500);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
  return (
     <div>
      <input type="file" id="notesFile" onChange={(e) => uploadFile(e, t)}></input>
@@ -114,6 +143,9 @@ else
      onClick={(e) => displayFile(t)}>
        { myObject }
        </button>
+       <button disabled={ !fileLink } style={{backgroundColor: !fileLink ? "" : "#336d6f"}} onClick={handleCopyClick}>
+        <span>{isCopied ? 'Copied!' : 'Copy file link'}</span>
+          </button>
      </div>
      );
 

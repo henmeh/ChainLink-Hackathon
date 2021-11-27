@@ -30,6 +30,7 @@ function InchDex({ chain }) {
   const [currentTrade, setCurrentTrade] = useState();
 
   console.log(chainId);
+  console.log(chain);
 
   const onChangeHandler = (event) => setFromAmount(event.target.value);
 

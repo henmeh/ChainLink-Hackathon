@@ -14,7 +14,7 @@ Moralis.start({
   appId: process.env.REACT_APP_MORALIS_APPLICATION_ID,
 });
 
-const Employees = () => {
+const Employees = ({ user }) => {
   const [isAddEmployeeModalActive, setAddEmployeeModalActive] = useState(false);
   const [daiBalance, setDaiBalance] = useState("");
   const { switchNetwork } = useChain();
@@ -23,7 +23,7 @@ const Employees = () => {
   useEffect(() => {
     networkCheck();
     getDaiBalance();
-  });
+  }, [chainId]);
 
   const networkCheck = async () => {
     chainId !== "0x5" && switchNetwork("0x5");
@@ -36,13 +36,13 @@ const Employees = () => {
       "0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00"
     );
     const balance = await contract.methods
-      .balanceOf("0xC4e2c53664d929e1D7D0AE9fBC848690EF3f81C1")
+      .balanceOf(user.attributes.ethAddress)
       .call();
     const revertedBalance = web3.utils.fromWei(balance, "ether");
     setDaiBalance(revertedBalance);
     setInterval(async function () {
       const balance = await contract.methods
-        .balanceOf("0xC4e2c53664d929e1D7D0AE9fBC848690EF3f81C1")
+        .balanceOf(user.attributes.ethAddress)
         .call();
       const revertedBalance = web3.utils.fromWei(balance, "ether");
       setDaiBalance(revertedBalance);
@@ -75,8 +75,8 @@ const Employees = () => {
           onClose={() => setAddEmployeeModalActive(false)}
         />
       )}
-      <PaymentPool />
-      <PaymentFlow />
+      <PaymentPool daiBalance={daiBalance}/>
+      <PaymentFlow daiBalance={daiBalance}/>
     </div>
   );
 };

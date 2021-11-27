@@ -9,13 +9,15 @@ import { Web3Provider } from "@ethersproject/providers";
 import { Moralis } from "moralis";
 import { useMoralis } from "react-moralis";
 import PayedOut from "./PayedOut";
+import Web3 from "web3";
+import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 
 Moralis.start({
   serverUrl: process.env.REACT_APP_MORALIS_SERVER_URL,
   appId: process.env.REACT_APP_MORALIS_APPLICATION_ID,
 });
 
-const PaymentFlow = () => {
+const PaymentFlow = ({ daiBalance }) => {
   const [id, setId] = useState("");
   const [title, setTitle] = useState("");
   const [first_name, setFirstName] = useState("");
@@ -30,6 +32,7 @@ const PaymentFlow = () => {
   const [salary, setSalary] = useState("");
   const { user } = useMoralis();
   const [employer, setEmployer] = useState();
+  const { chainId } = useMoralisDapp();
 
   const [isEditEmployeeModalActive, setEditEmployeeModalActive] =
     useState(false);
@@ -42,7 +45,7 @@ const PaymentFlow = () => {
 
   const initSuperfluid = async () => {
     const sf = new SuperfluidSDK.Framework({
-      ethers: new Web3Provider(window.ethereum),
+      web3: new Web3(window.ethereum),
     });
     await sf.initialize();
     const employer = sf.user({
@@ -54,8 +57,8 @@ const PaymentFlow = () => {
   };
 
   useEffect(() => {
-    initSuperfluid();
-  }, []);
+    chainId == "0x5" && initSuperfluid();
+  }, [chainId]);
 
   const deleteEmployee = async (_employeeId) => {
     const Employee = Moralis.Object.extend("PaymentFlow");
@@ -103,27 +106,32 @@ const PaymentFlow = () => {
   };
 
   const startPaymentFlow = async (_receiver, _monthlySalary, _id) => {
-    const flowRate = calculatingFlowRate(_monthlySalary);
-    const sf = new SuperfluidSDK.Framework({
-      ethers: new Web3Provider(window.ethereum),
-    });
-    await sf.initialize();
-    const employer = sf.user({
-      address: user.attributes.ethAddress,
-      token: "0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00",
-    });
+    if (daiBalance === "0") {
+      alert("You don't have any Dai to start Paymentflow");
+      return;
+    } else {
+      const flowRate = calculatingFlowRate(_monthlySalary);
+      const sf = new SuperfluidSDK.Framework({
+        ethers: new Web3Provider(window.ethereum),
+      });
+      await sf.initialize();
+      const employer = sf.user({
+        address: user.attributes.ethAddress,
+        token: "0xF2d68898557cCb2Cf4C10c3Ef2B034b2a69DAD00",
+      });
 
-    await employer.flow({
-      recipient: _receiver,
-      flowRate: flowRate.toString(),
-    });
+      await employer.flow({
+        recipient: _receiver,
+        flowRate: flowRate.toString(),
+      });
 
-    const Employee = Moralis.Object.extend("PaymentFlow");
-    const query = new Moralis.Query(Employee);
-    query.equalTo("objectId", _id);
-    const result = await query.first();
-    result.set("activeStream", true);
-    await result.save();
+      const Employee = Moralis.Object.extend("PaymentFlow");
+      const query = new Moralis.Query(Employee);
+      query.equalTo("objectId", _id);
+      const result = await query.first();
+      result.set("activeStream", true);
+      await result.save();
+    }
   };
 
   const deletePaymentFlow = async (_receiver, _id) => {
@@ -271,23 +279,23 @@ const PaymentFlow = () => {
           />
         ) : (
           <div>
-          <Button
-            text={"Stop"}
-            onClick={() => deletePaymentFlow(record.ethAddress, record.id)}
-          />
-          <PayedOut _salary = {record.salary} />
+            <Button
+              text={"Stop"}
+              onClick={() => deletePaymentFlow(record.ethAddress, record.id)}
+            />
+            <PayedOut _salary={record.salary} />
           </div>
         ),
     },
   ];
 
   return (
-    <div style={{margin: "10px"}}>
+    <div style={{ margin: "10px" }}>
       {isEditEmployeeModalActive && (
         <EditEmployeeModal
           open={isEditEmployeeModalActive}
           onClose={() => setEditEmployeeModalActive(false)}
-          _paymentMethod = "PaymentFlow"
+          _paymentMethod="PaymentFlow"
           _id={id}
           _title={title}
           _first_name={first_name}
@@ -306,7 +314,7 @@ const PaymentFlow = () => {
         rowClassName="tablerow"
         dataSource={dataSource}
         columns={columns}
-        title={() => <h3 style={{ color: "black"}}>Company Paymentflows</h3>}
+        title={() => <h3 style={{ color: "black" }}>Company Paymentflows</h3>}
       />
     </div>
   );

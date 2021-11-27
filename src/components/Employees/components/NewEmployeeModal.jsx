@@ -228,7 +228,7 @@ const NewEmployeeModal = ({ open, onClose }) => {
           <Form.Item
             label={<label style={{color: "white"}}> Date of Birth </label>}
             name="dateofbirth"
-            rules={[{ required: true, message: "Please input Date of Birth!" }]}
+            //rules={[{ required: true, message: "Please input Date of Birth!" }]}
           >
             <input
               className="input_dateOfBirth"
@@ -240,7 +240,7 @@ const NewEmployeeModal = ({ open, onClose }) => {
           <Form.Item
             label={<label style={{color: "white"}}> Gender </label>}
             name="gender"
-            rules={[{ required: true, message: "Please input Gender!" }]}
+            //rules={[{ required: true, message: "Please input Gender!" }]}
           >
             <input
               className="input_gender"
@@ -252,7 +252,7 @@ const NewEmployeeModal = ({ open, onClose }) => {
           <Form.Item
             label={<label style={{color: "white"}}> Address </label>}
             name="address"
-            rules={[{ required: true, message: "Please input Address!" }]}
+            //rules={[{ required: true, message: "Please input Address!" }]}
           >
             <input
               className="input_address"
@@ -264,7 +264,7 @@ const NewEmployeeModal = ({ open, onClose }) => {
           <Form.Item
             label={<label style={{color: "white"}}> Email </label>}
             name="email"
-            rules={[{ required: true, message: "Please input Email!" }]}
+            //rules={[{ required: true, message: "Please input Email!" }]}
           >
             <input
               className="input_email"
@@ -276,7 +276,7 @@ const NewEmployeeModal = ({ open, onClose }) => {
           <Form.Item
             label={<label style={{color: "white"}}> Phone </label>}
             name="phone"
-            rules={[{ required: true, message: "Please input Phone!" }]}
+            //rules={[{ required: true, message: "Please input Phone!" }]}
           >
             <input
               className="input_phone"
@@ -300,7 +300,7 @@ const NewEmployeeModal = ({ open, onClose }) => {
           <Form.Item
             label={<label style={{color: "white"}}> Hire Date </label>}
             name="hiredate"
-            rules={[{ required: true, message: "Please input Hire Date!" }]}
+            //rules={[{ required: true, message: "Please input Hire Date!" }]}
           >
             <input
               className="input_hiredate"
@@ -312,7 +312,7 @@ const NewEmployeeModal = ({ open, onClose }) => {
           <Form.Item
             label={<label style={{color: "white"}}> Monthly Salary </label>}
             name="salary"
-            rules={[{ required: true, message: "Please input Hire Salary!" }]}
+            rules={[{ required: true, message: "Please input Monthly Salary!" }]}
           >
             <input
               className="input_salaray"
@@ -330,38 +330,44 @@ const NewEmployeeModal = ({ open, onClose }) => {
         <Button
           text={"Create"}
           onClick={() => {
-            const activeStream = false;
-            const poolId = 1;
-            let paymentMethod;
-            isFlow ? paymentMethod = "flow" : paymentMethod = "pool";
-            setTitle("");
-            setFirstName("");
-            setLastName("");
-            setDateOfBirth("");
-            setGender("");
-            setAddress("");
-            setEmailAddress("");
-            setPhone("");
-            setEthAddress("");
-            setHireDate("");
-            setSalary("");
-            saveEmployee(
-              paymentMethod,
-              title,
-              first_name,
-              last_name,
-              dateOfBirth,
-              gender,
-              address,
-              emailAddress,
-              phone,
-              ethAddress,
-              hireDate,
-              salary,
-              activeStream,
-              poolId,
-            )
-            onClose();
+            if(ethAddress === "" || salary === "") {
+              alert("Please input a valid Eth Address and a valid monthly salary");
+              return;
+            } else {
+              const activeStream = false;
+              const poolId = 1;
+              let paymentMethod;
+              isFlow ? paymentMethod = "flow" : paymentMethod = "pool";
+              setTitle("");
+              setFirstName("");
+              setLastName("");
+              setDateOfBirth("");
+              setGender("");
+              setAddress("");
+              setEmailAddress("");
+              setPhone("");
+              setEthAddress("");
+              setHireDate("");
+              setSalary("");
+              saveEmployee(
+                paymentMethod,
+                title,
+                first_name,
+                last_name,
+                dateOfBirth,
+                gender,
+                address,
+                emailAddress,
+                phone,
+                ethAddress,
+                hireDate,
+                salary,
+                activeStream,
+                poolId,
+              )
+              onClose();
+            }
+           
           }}
         />
       </div>

@@ -8,13 +8,16 @@ import SuperfluidSDK from "@superfluid-finance/js-sdk";
 import { Web3Provider } from "@ethersproject/providers";
 import { Moralis } from "moralis";
 import { useMoralis } from "react-moralis";
+import Web3 from "web3";
+import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
+
 
 Moralis.start({
   serverUrl: process.env.REACT_APP_MORALIS_SERVER_URL,
   appId: process.env.REACT_APP_MORALIS_APPLICATION_ID,
 });
 
-const PaymentPool = () => {
+const PaymentPool = ({ daiBalance }) => {
   const [id, setId] = useState("");
   const [title, setTitle] = useState("");
   const [first_name, setFirstName] = useState("");
@@ -29,6 +32,8 @@ const PaymentPool = () => {
   const [salary, setSalary] = useState("");
   const { user } = useMoralis();
   const [employer, setEmployer] = useState();
+  const { chainId } = useMoralisDapp();
+
 
   const [isEditEmployeeModalActive, setEditEmployeeModalActive] =
     useState(false);
@@ -43,7 +48,7 @@ const PaymentPool = () => {
 
   const initSuperfluid = async () => {
     const sf = new SuperfluidSDK.Framework({
-      ethers: new Web3Provider(window.ethereum),
+      web3: new Web3(window.ethereum),
     });
     await sf.initialize();
     const employer = sf.user({
@@ -55,8 +60,8 @@ const PaymentPool = () => {
   };
 
   useEffect(() => {
-    initSuperfluid();
-  }, []);
+    chainId == "0x5" && initSuperfluid();
+  }, [chainId]);
 
   const deleteEmployee = async (_employeeId) => {
     const Employee = Moralis.Object.extend("PaymentPoolMembers");
@@ -67,7 +72,11 @@ const PaymentPool = () => {
   };
 
   const payoutPool = async () => {
-    //finding the pool on moralis
+    if (daiBalance === "0") {
+      alert("You don't have any Dai to start Paymentflow");
+      return;
+    } else {
+      //finding the pool on moralis
     const web3 = new Moralis.Web3();
     const Pool = Moralis.Object.extend("PaymentPoolMembers");
     const query = new Moralis.Query(Pool);
@@ -79,6 +88,7 @@ const PaymentPool = () => {
       poolId: 104,
       amount: salary,
     });
+    }
   };
 
   const editEmployee = (
