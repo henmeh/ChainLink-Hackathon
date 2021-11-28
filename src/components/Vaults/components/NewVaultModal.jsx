@@ -98,7 +98,7 @@ const NewVaultModal = ({ open, onClose }) => {
     vault.set("donationPerUser", donationPerUser);
     vault.set("userGoal", userGoal);
     vault.set("charityAddress", charityAddress);
-    vault.set("ethVault", ethVault);
+    vault.set("ethVault", ethVault.toString());
     vault.set("daysLocked", daysLocked);
     vault.set("vaultId", (await getVaultId() - 1).toString());
     await vault.save();
