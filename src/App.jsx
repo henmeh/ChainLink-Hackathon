@@ -9,6 +9,7 @@ import InchDex from "./components/InchDex/InchDex";
 import Employees from "./components/Employees/employees";
 import Chains from "./components/Chains/Chains";
 import Account from "./components/Account";
+import Vaults from "./components/Vaults/Vaults";
 import { Menu, Image } from "antd";
 import "./style.css";
 import logo from "./images/logo.npg.png";
@@ -132,6 +133,9 @@ const App = ({ isServerInfo }) => {
             <Menu.Item key="nftminter">
               <NavLink to="/nftminter"> NFT Minter</NavLink>
             </Menu.Item>
+            <Menu.Item key="vaults">
+              <NavLink to="/vaults"> Vaults</NavLink>
+            </Menu.Item>
           </Menu>
         </div>
         <div style={styles.content}>
@@ -160,6 +164,9 @@ const App = ({ isServerInfo }) => {
             </Route>
             <Route exact path="/nftminter">
               <CreateNFT />
+            </Route>
+            <Route exact path="/Vaults">
+              <Vaults />
             </Route>
              <Redirect from="/" to="/balance" />
           </Switch>
