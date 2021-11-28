@@ -30,7 +30,9 @@ const Vaults = () => {
     chainId !== "0x3" && switchNetwork("0x3");
   }
 
-  const addAmount = async (_id) => {
+  const addAmount = async (_id, _value) => {
+    console.log(_id);
+    console.log(_value);
     const web3 = await Moralis.enableWeb3();
     const contract = new web3.eth.Contract(vaultAbi, contractAddress);
    
@@ -39,8 +41,9 @@ const Vaults = () => {
             functionName: "addAmount",
             abi: vaultAbi,
             params: {
-              vaultId: _id
+              vaultId: parseInt(_id)
             },
+            msgValue: Moralis.Units.Token(_value, "18"),
           };  
     const receipt = await Moralis.executeFunction(options);
     console.log(receipt)
@@ -55,12 +58,20 @@ const Vaults = () => {
             functionName: "distributeFundsBack",
             abi: vaultAbi,
             params: {
-              vaultId: _id
+              vaultId: parseInt(_id)
             },
           };   
     const receipt = await Moralis.executeFunction(options);
     console.log(receipt)
   }
+
+  const deleteVault = async (_id) => {
+    const Vault = Moralis.Object.extend("Vaults");
+    const query = new Moralis.Query(Vault);
+    query.equalTo("objectId", _id);
+    const result = await query.first();
+    await result.destroy();
+  };
 
   let dataSource = [];
 
@@ -76,6 +87,7 @@ const Vaults = () => {
         charityAddress: data[i].attributes.charityAddress,
         ethVault: data[i].attributes.ethVault,
         daysLocked: data[i].attributes.daysLocked,
+        vaultId: data[i].attributes.vaultId,
       };
       dataSource.push(vault);
     }
@@ -126,7 +138,7 @@ const Vaults = () => {
               text={"Add Amount"}
               onClick={() => {
                 addAmount(
-                  record.id
+                  record.vaultId, record.donationPerUser
                 );
               }}
             />
@@ -134,7 +146,14 @@ const Vaults = () => {
               text={"Distribute Funds Back"}
               onClick={() => {
                 distributeFundsBack(
-                  record.id
+                  record.vaultId
+                );
+              }}
+            />
+            <Button
+              text={"Delete Vault"}
+              onClick={() => {
+                deleteVault(record.id
                 );
               }}
             />

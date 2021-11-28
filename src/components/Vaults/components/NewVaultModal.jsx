@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Button from "../../Button/button";
-import { Form } from "antd";
+import { Form, Checkbox } from "antd";
 import { Moralis } from "moralis";
 import { useMoralis } from "react-moralis";
 import { vaultAbi } from "../../../helpers/abi";
@@ -16,7 +16,7 @@ const NewVaultModal = ({ open, onClose }) => {
   const [donationPerUser, setDonationPerUser] = useState("");
   const [userGoal, setUserGoal] = useState("");
   const [charityAddress, setCharityAddress] = useState("");
-  const [ethVault, setEthVautlt] = useState("");
+  const [ethVault, setEthVault] = useState(true);
   const [daysLocked, setDaysLocked] = useState("");
   const { user } = useMoralis();
   const contractAddress = "0x7b9DaE28d5c7E5024a537Baa9D33c01CA60520fB";
@@ -54,6 +54,22 @@ const NewVaultModal = ({ open, onClose }) => {
     },
   };
 
+  const getVaultId = async () => {
+    const web3 = await Moralis.enableWeb3();
+    const contract = new web3.eth.Contract(vaultAbi, contractAddress);
+   
+        const options = {
+            contractAddress: contractAddress,
+            functionName: "getVaultCount",
+            abi: vaultAbi,
+            params: {
+            },
+          };  
+    const receipt = await Moralis.executeFunction(options);
+    console.log(receipt);
+    return receipt;
+  }
+
   const createVault = async () => {
     const web3 = await Moralis.enableWeb3();
     const contract = new web3.eth.Contract(vaultAbi, contractAddress);
@@ -84,6 +100,7 @@ const NewVaultModal = ({ open, onClose }) => {
     vault.set("charityAddress", charityAddress);
     vault.set("ethVault", ethVault);
     vault.set("daysLocked", daysLocked);
+    vault.set("vaultId", (await getVaultId() - 1).toString());
     await vault.save();
   }
 
@@ -137,7 +154,7 @@ const NewVaultModal = ({ open, onClose }) => {
           </Form.Item>
           <Form.Item
             label={<label style={{color: "white"}}> Donation </label>}
-            name="donation"
+            name="number"
             rules={[{ required: true, message: "Please input donation per user" }]}
           >
             <input
@@ -150,17 +167,17 @@ const NewVaultModal = ({ open, onClose }) => {
           <Form.Item
             label={<label style={{color: "white"}}> Usergoal </label>}
             name="goal"
-            //rules={[{ required: true, message: "Please input Date of Birth!" }]}
+            rules={[{ required: true, message: "Please input Usergoal!" }]}
           >
             <input
               className="input_dateOfBirth"
               value={userGoal}
-              type="test"
+              type="number"
               onChange={(event) => setUserGoal(event.target.value)}
             />
           </Form.Item>
           <Form.Item
-            label={<label style={{color: "white"}}> Charity Address </label>}
+            label={<label style={{color: "white"}}> Charityaddress </label>}
             name="address"
             rules={[{ required: true, message: "Please input an address!" }]}
           >
@@ -176,13 +193,8 @@ const NewVaultModal = ({ open, onClose }) => {
             name="vault"
             //rules={[{ required: true, message: "Please input Address!" }]}
           >
-            <input
-              className="input_address"
-              type="text"
-              value={ethVault}
-              onChange={(event) => setEthVautlt(event.target.value)}
-            />
-          </Form.Item>
+            <Checkbox checked={ethVault} onChange={() => {setEthVault(!ethVault)}}></Checkbox>
+              </Form.Item>
           <Form.Item
             label={<label style={{color: "white"}}> Days locked </label>}
             name="days"
@@ -190,7 +202,7 @@ const NewVaultModal = ({ open, onClose }) => {
           >
             <input
               className="input_email"
-              type="text"
+              type="number"
               value={daysLocked}
               onChange={(event) => setDaysLocked(event.target.value)}
             />
@@ -199,12 +211,12 @@ const NewVaultModal = ({ open, onClose }) => {
         <Button
           text={"Create"}
           onClick={() => {
-             createVault()
+              createVault()
               setName("");
               setDescription("");
               setDonationPerUser("");
               setCharityAddress("");
-              setEthVautlt("");
+              setEthVault(true);
               setDaysLocked("");
               setUserGoal("");
               onClose();
